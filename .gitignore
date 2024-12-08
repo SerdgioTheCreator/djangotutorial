@@ -1,0 +1,8 @@
+venv/
+*.pyc
+__pycache__/
+infra/.env
+*.sqlite3
+poetry.lock
+.mypy_cache
+.idea
