@@ -6,3 +6,4 @@ infra/.env
 poetry.lock
 .mypy_cache
 .idea
+migrations/
