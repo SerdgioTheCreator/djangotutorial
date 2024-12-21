@@ -7,6 +7,23 @@ from django.utils import timezone
 from .models import Question, Choice
 
 
+def create_question(question_text, days):
+    """
+    Create a question with the given `question_text` and published the
+    given number of `days` offset to now (negative for questions published
+    in the past, positive for questions that have yet to be published).
+    """
+    time = timezone.now() + datetime.timedelta(days=days)
+    return Question.objects.create(question_text=question_text, pub_date=time)
+
+
+def create_choice(question, choice_text):
+    """
+    Create a choice with the given Question() and 'choice_text'.
+    """
+    return Choice.objects.create(question=question, choice_text=choice_text)
+
+
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
         """
@@ -34,23 +51,6 @@ class QuestionModelTests(TestCase):
         time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
-
-
-def create_question(question_text, days):
-    """
-    Create a question with the given `question_text` and published the
-    given number of `days` offset to now (negative for questions published
-    in the past, positive for questions that have yet to be published).
-    """
-    time = timezone.now() + datetime.timedelta(days=days)
-    return Question.objects.create(question_text=question_text, pub_date=time)
-
-
-def create_choice(question, choice_text):
-    """
-    Create a choice with the given Question() and 'choice_text'.
-    """
-    return Choice.objects.create(question=question, choice_text=choice_text)
 
 
 class QuestionIndexViewTests(TestCase):
@@ -155,7 +155,7 @@ class QuestionDetailViewTests(TestCase):
         self.assertContains(response, past_question.question_text)
 
 
-class QuestionResultsViewTest(TestCase):
+class QuestionResultsViewTests(TestCase):
     def test_future_question(self):
         """
         The results view of a question with a pub_date in the future
