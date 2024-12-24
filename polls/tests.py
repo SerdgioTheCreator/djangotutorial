@@ -1,6 +1,7 @@
 import datetime
 
-from django.test import TestCase
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -54,6 +55,11 @@ class QuestionModelTests(TestCase):
 
 
 class QuestionIndexViewTests(TestCase):
+    def setUp(self) -> None:
+        self.admin = Client()
+        self.admin_user = User.objects.create_superuser('admin', 'admin@admin.ru', 'password')
+        self.admin.force_login(self.admin_user)
+
     def test_no_questions(self):
         """
         If no questions exist, an appropriate message is displayed.
@@ -129,6 +135,15 @@ class QuestionIndexViewTests(TestCase):
         question = create_question(question_text="Question without choice.", days=-1)
         create_choice(question, choice_text="Choice text.")
         response = self.client.get(reverse("polls:index"))
+        self.assertQuerySetEqual(response.context["latest_question_list"], [question])
+
+    def test_admin_can_see_questions_without_choices(self):
+        """
+        Question without choice are displayed on
+        the index page for Admin.
+        """
+        question = create_question(question_text="Question without choice.", days=-1)
+        response = self.admin.get(reverse("polls:index"))
         self.assertQuerySetEqual(response.context["latest_question_list"], [question])
 
 
