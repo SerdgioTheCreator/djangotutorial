@@ -25,7 +25,7 @@ TESTING = os.getenv('TESTING', default=False)
 
 if TESTING is True:
     INSTALLED_APPS = [
-        'polls.apps.PollsConfig',
+        'django_polls.apps.PollsConfig',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -46,7 +46,7 @@ if TESTING is True:
 else:
     INSTALLED_APPS = [
         'debug_toolbar',
-        'polls.apps.PollsConfig',
+        'django_polls.apps.PollsConfig',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
